@@ -36,13 +36,13 @@ Aplikasi web resep masakan nusantara yang dibangun dengan HTML, CSS, dan JavaScr
 
 ## 📁 Struktur File
 dapur-nusantara/
-├── landing_page.html
-├── login_page.html
-├── register_page.html
-├── home_page.html
-├── see_recipe.html
-├── add_recipe_page.html
-├── my_recipe.html
-├── profile_page.html
-├── style.css
-└── shared.js
+landing_page.html,
+login_page.html,
+register_page.html,
+home_page.html,
+see_recipe.html,
+add_recipe_page.html,
+my_recipe.html,
+profile_page.html,
+style.css,
+shared.js
