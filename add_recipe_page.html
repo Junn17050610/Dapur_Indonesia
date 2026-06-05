@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tambah Resep — Dapur Indonesia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── FORM LAYOUT ── */
+    .form-wrap {
+      max-width: 820px;
+    }
+
+    .form-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .form-section-title {
+      font-family: var(--font-head);
+      font-size: 1.15rem;
+      color: var(--text);
+      padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    /* EMOJI PICKER */
+    .emoji-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-bottom: .65rem;
+    }
+    .emoji-item {
+      width: 2.6rem; height: 2.6rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all .18s var(--ease);
+      user-select: none;
+    }
+    .emoji-item:hover { border-color: var(--amber); background: var(--amber-pale); transform: scale(1.1); }
+    .emoji-item.selected { border-color: var(--amber); background: var(--amber-pale); box-shadow: 0 0 0 2px var(--amber); }
+
+    .emoji-preview {
+      display: flex; align-items: center; gap: .65rem;
+      font-size: .85rem; color: var(--muted);
+      margin-top: .35rem;
+    }
+    .emoji-preview-icon { font-size: 2rem; }
+
+    /* DYNAMIC ROWS: Ingredients */
+    .ing-rows { display: flex; flex-direction: column; gap: .6rem; }
+    .ing-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: .6rem;
+      align-items: center;
+    }
+    .ing-row input {
+      padding: .65rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .18s;
+      width: 100%;
+    }
+    .ing-row input:focus { border-color: var(--amber); }
+
+    /* DYNAMIC ROWS: Steps */
+    .step-rows { display: flex; flex-direction: column; gap: .75rem; }
+    .step-row {
+      display: grid;
+      grid-template-columns: 2rem 1fr auto;
+      gap: .75rem;
+      align-items: flex-start;
+    }
+    .step-num-badge {
+      width: 2rem; height: 2rem;
+      background: var(--amber); color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+      font-size: .8rem; font-weight: 700;
+      flex-shrink: 0;
+      margin-top: .5rem;
+    }
+    .step-row textarea {
+      padding: .65rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      font-size: .9rem;
+      outline: none;
+      resize: vertical;
+      width: 100%;
+      min-height: 72px;
+      line-height: 1.6;
+      transition: border-color .18s;
+    }
+    .step-row textarea:focus { border-color: var(--amber); }
+
+    /* ROW BUTTONS */
+    .btn-remove {
+      width: 2rem; height: 2rem;
+      border-radius: var(--radius-sm);
+      background: #FEE2E2; color: #EF4444;
+      font-size: .8rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background .15s;
+      border: none; cursor: pointer;
+    }
+    .btn-remove:hover { background: #FECACA; }
+    .btn-add-row {
+      display: inline-flex; align-items: center; gap: .4rem;
+      color: var(--amber); font-size: .88rem; font-weight: 600;
+      margin-top: .5rem;
+      padding: .4rem .75rem;
+      border-radius: var(--radius-sm);
+      transition: background .15s;
+      border: none; cursor: pointer; background: none;
+    }
+    .btn-add-row:hover { background: var(--amber-pale); }
+
+    /* TIPS TEXTAREA */
+    #f-tips { min-height: 90px; }
+
+    /* FORM FOOTER */
+    .form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    /* PREVIEW PANEL */
+    .preview-panel {
+      background: var(--surface-2);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem;
+      text-align: center;
+      position: sticky;
+      top: calc(var(--nav-h) + 1.5rem);
+    }
+    .preview-panel h4 { font-size: 1rem; margin-bottom: .75rem; color: var(--muted); }
+    .preview-card-mini {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-top: .75rem;
+      text-align: left;
+    }
+    .preview-thumb {
+      height: 120px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+    }
+    .preview-body { padding: .85rem 1rem; }
+    .preview-cat { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--amber); margin-bottom: .2rem; }
+    .preview-title { font-family: var(--font-head); font-size: 1.05rem; color: var(--text); margin-bottom: .4rem; }
+    .preview-meta { font-size: .78rem; color: var(--muted); display: flex; gap: .75rem; }
+
+    /* TWO COL LAYOUT for large screens */
+    .add-recipe-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 1.75rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 960px) {
+      .add-recipe-grid { grid-template-columns: 1fr; }
+      .preview-panel { position: static; }
+    }
+    @media (max-width: 600px) {
+      .form-section { padding: 1.25rem 1rem; }
+      .ing-row { grid-template-columns: 1fr auto; }
+      .ing-row input:last-of-type { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar" role="navigation" aria-label="Sidebar navigasi">
+  <div class="sidebar-header">
+    <a href="home_page.html" class="brand-logo">
+      <span class="icon">🍳</span>
+      <span class="wordmark">Dapur<em> Indonesia</em></span>
+    </a>
+  </div>
+  <ul class="sidebar-nav" role="list">
+    <li><a href="home_page.html"       class="nav-link"        data-page="home"       role="listitem"><span class="nav-icon">🏠</span> Beranda</a></li>
+    <li><a href="my_recipe.html"       class="nav-link"        data-page="my-recipe"  role="listitem"><span class="nav-icon">📖</span> Resep Saya</a></li>
+    <li><a href="add_recipe_page.html" class="nav-link active" data-page="add-recipe" role="listitem"><span class="nav-icon">➕</span> Tambah Resep</a></li>
+    <li><a href="profile_page.html"    class="nav-link"        data-page="profile"    role="listitem"><span class="nav-icon">👤</span> Profil</a></li>
+  </ul>
+  <div class="sidebar-footer">
+    <button class="btn btn-ghost btn-sm btn-full" id="logout-btn" style="justify-content:flex-start;gap:.5rem">🚪 Keluar</button>
+  </div>
+</nav>
+<div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- TOPBAR -->
+<header class="app-navbar" role="banner">
+  <div class="nav-left">
+    <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle menu">☰</button>
+    <span style="font-family:var(--font-head);font-weight:700;font-size:1.05rem;color:var(--brown-dark)" id="page-title">Tambah Resep</span>
+  </div>
+  <div class="nav-right">
+    <div class="avatar" id="user-avatar" onclick="window.location.href='profile_page.html'" title="Profil" style="cursor:pointer">👨‍🍳</div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="app-main">
+  <div class="page-content">
+
+    <div class="page-header anim-fade-up">
+      <div class="page-header-text">
+        <h1 id="form-heading">➕ Tambah Resep Baru</h1>
+        <p>Bagikan resep andalanmu kepada ribuan pecinta kuliner nusantara</p>
+      </div>
+    </div>
+
+    <div class="add-recipe-grid">
+
+      <!-- FORM -->
+      <form class="form-wrap" id="recipe-form" novalidate>
+
+        <!-- SECTION 1: Info Dasar -->
+        <div class="form-section anim-fade-up">
+          <h2 class="form-section-title">📝 Informasi Dasar</h2>
+
+          <div class="form-group">
+            <label for="f-name">Nama Resep <span class="required">*</span></label>
+            <input type="text" id="f-name" class="form-control"
+                   placeholder="cth: Rendang Padang Spesial Nenek"
+                   oninput="updatePreview()" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-cat">Kategori <span class="required">*</span></label>
+              <select id="f-cat" class="form-control" onchange="updatePreview()" required>
+                <option value="">— Pilih Kategori —</option>
+                <option value="ayam">🐔 Ayam</option>
+                <option value="seafood">🦐 Seafood</option>
+                <option value="sayur">🥦 Sayur</option>
+                <option value="daging">🥩 Daging</option>
+                <option value="snack">🍡 Snack</option>
+                <option value="minuman">🥤 Minuman</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-diff">Tingkat Kesulitan</label>
+              <select id="f-diff" class="form-control" onchange="updatePreview()">
+                <option value="Mudah">🟢 Mudah</option>
+                <option value="Sedang" selected>🟡 Sedang</option>
+                <option value="Sulit">🔴 Sulit</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-time">Waktu Masak (menit) <span class="required">*</span></label>
+              <input type="number" id="f-time" class="form-control"
+                     placeholder="cth: 45" min="1" max="9999"
+                     oninput="updatePreview()" required />
+            </div>
+            <div class="form-group">
+              <label for="f-serving">Porsi</label>
+              <input type="text" id="f-serving" class="form-control"
+                     placeholder="cth: 4 orang"
+                     oninput="updatePreview()" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="f-desc">Deskripsi Singkat</label>
+            <textarea id="f-desc" class="form-control" rows="3"
+                      placeholder="Ceritakan sedikit tentang resep ini — asal-usulnya, cita rasanya, atau kenangan spesialnya…"></textarea>
+          </div>
+
+          <!-- EMOJI PICKER -->
+          <div class="form-group">
+            <label>Ikon Makanan</label>
+            <div class="emoji-grid" id="emoji-grid" role="radiogroup" aria-label="Pilih ikon makanan">
+              <span class="emoji-item selected" data-emoji="🍜" tabindex="0" role="radio" aria-checked="true">🍜</span>
+              <span class="emoji-item" data-emoji="🍛" tabindex="0" role="radio" aria-checked="false">🍛</span>
+              <span class="emoji-item" data-emoji="🥘" tabindex="0" role="radio" aria-checked="false">🥘</span>
+              <span class="emoji-item" data-emoji="🍲" tabindex="0" role="radio" aria-checked="false">🍲</span>
+              <span class="emoji-item" data-emoji="🫕" tabindex="0" role="radio" aria-checked="false">🫕</span>
+              <span class="emoji-item" data-emoji="🍗" tabindex="0" role="radio" aria-checked="false">🍗</span>
+              <span class="emoji-item" data-emoji="🥩" tabindex="0" role="radio" aria-checked="false">🥩</span>
+              <span class="emoji-item" data-emoji="🦐" tabindex="0" role="radio" aria-checked="false">🦐</span>
+              <span class="emoji-item" data-emoji="🐟" tabindex="0" role="radio" aria-checked="false">🐟</span>
+              <span class="emoji-item" data-emoji="🦑" tabindex="0" role="radio" aria-checked="false">🦑</span>
+              <span class="emoji-item" data-emoji="🥦" tabindex="0" role="radio" aria-checked="false">🥦</span>
+              <span class="emoji-item" data-emoji="🥗" tabindex="0" role="radio" aria-checked="false">🥗</span>
+              <span class="emoji-item" data-emoji="🥚" tabindex="0" role="radio" aria-checked="false">🥚</span>
+              <span class="emoji-item" data-emoji="🍳" tabindex="0" role="radio" aria-checked="false">🍳</span>
+              <span class="emoji-item" data-emoji="🍡" tabindex="0" role="radio" aria-checked="false">🍡</span>
+              <span class="emoji-item" data-emoji="🍰" tabindex="0" role="radio" aria-checked="false">🍰</span>
+              <span class="emoji-item" data-emoji="🧆" tabindex="0" role="radio" aria-checked="false">🧆</span>
+              <span class="emoji-item" data-emoji="🥤" tabindex="0" role="radio" aria-checked="false">🥤</span>
+              <span class="emoji-item" data-emoji="☕" tabindex="0" role="radio" aria-checked="false">☕</span>
+              <span class="emoji-item" data-emoji="🧋" tabindex="0" role="radio" aria-checked="false">🧋</span>
+            </div>
+            <div class="emoji-preview">
+              <span class="emoji-preview-icon" id="emoji-preview-icon">🍜</span>
+              <span>Ikon yang dipilih</span>
+            </div>
+            <input type="hidden" id="f-emoji" value="🍜" />
+          </div>
+        </div>
+
+        <!-- SECTION 2: Bahan-bahan -->
+        <div class="form-section anim-fade-up-2">
+          <h2 class="form-section-title">🧂 Bahan-bahan</h2>
+          <div class="ing-rows" id="ing-rows">
+            <div class="ing-row">
+              <input type="text" placeholder="Nama bahan (cth: Daging sapi)" class="ing-name" />
+              <input type="text" placeholder="Jumlah (cth: 500 gram)" class="ing-amount" />
+              <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus baris">✕</button>
+            </div>
+            <div class="ing-row">
+              <input type="text" placeholder="Nama bahan" class="ing-name" />
+              <input type="text" placeholder="Jumlah" class="ing-amount" />
+              <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus baris">✕</button>
+            </div>
+            <div class="ing-row">
+              <input type="text" placeholder="Nama bahan" class="ing-name" />
+              <input type="text" placeholder="Jumlah" class="ing-amount" />
+              <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus baris">✕</button>
+            </div>
+          </div>
+          <button type="button" class="btn-add-row" onclick="addIngredient()" aria-label="Tambah bahan">+ Tambah Bahan</button>
+        </div>
+
+        <!-- SECTION 3: Langkah -->
+        <div class="form-section anim-fade-up-3">
+          <h2 class="form-section-title">👨‍🍳 Langkah Memasak</h2>
+          <div class="step-rows" id="step-rows">
+            <div class="step-row">
+              <span class="step-num-badge">1</span>
+              <textarea class="step-text" placeholder="Tuliskan langkah pertama memasak…" rows="2"></textarea>
+              <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus langkah">✕</button>
+            </div>
+            <div class="step-row">
+              <span class="step-num-badge">2</span>
+              <textarea class="step-text" placeholder="Lanjutkan langkah berikutnya…" rows="2"></textarea>
+              <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus langkah">✕</button>
+            </div>
+          </div>
+          <button type="button" class="btn-add-row" onclick="addStep()" aria-label="Tambah langkah">+ Tambah Langkah</button>
+        </div>
+
+        <!-- SECTION 4: Tips -->
+        <div class="form-section anim-fade-up-4">
+          <h2 class="form-section-title">💡 Tips Chef <span style="font-size:.8rem;font-weight:400;color:var(--muted);font-family:var(--font-body)">(opsional)</span></h2>
+          <div class="form-group" style="margin-bottom:0">
+            <textarea id="f-tips" class="form-control"
+                      placeholder="Tips khusus agar masakanmu lebih enak — trik bumbu, suhu memasak, pengganti bahan, atau cara penyajian terbaik…"></textarea>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="form-footer">
+          <button type="button" class="btn btn-secondary" onclick="resetForm()">↺ Reset Form</button>
+          <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">🚀 Publikasikan Resep</button>
+        </div>
+
+      </form>
+
+      <!-- PREVIEW PANEL -->
+      <aside class="preview-panel anim-fade-up-2" aria-label="Pratinjau kartu resep">
+        <h4 style="color:var(--muted);font-family:var(--font-body);font-size:.85rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem">Pratinjau Kartu</h4>
+        <div class="preview-card-mini" id="preview-card">
+          <div class="preview-thumb" id="preview-thumb" style="background:#FEF0E3">🍜</div>
+          <div class="preview-body">
+            <p class="preview-cat" id="preview-cat">— Pilih Kategori</p>
+            <p class="preview-title" id="preview-title">Nama Resep…</p>
+            <div class="preview-meta">
+              <span id="preview-time">⏱️ — mnt</span>
+              <span id="preview-diff">📊 Sedang</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:1rem;line-height:1.6">
+          Pratinjau akan berubah seiring kamu mengisi form di kiri.
+        </p>
+      </aside>
+
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" role="status" aria-live="polite"></div>
+<script src="shared.js"></script>
+<script>
+  requireAuth();
+  initSidebar();
+
+  const user = DB.getUser();
+  if (user) document.getElementById('user-avatar').textContent = user.avatar || '👨‍🍳';
+
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    DB.logout(); window.location.href = 'landing_page.html';
+  });
+
+  // ── EDIT MODE ──
+  let editId = null;
+  const editIdRaw = localStorage.getItem('dn_edit_id');
+  if (editIdRaw) {
+    editId = parseInt(editIdRaw);
+    localStorage.removeItem('dn_edit_id');
+    const recipe = DB.getRecipes().find(r => r.id === editId);
+    if (recipe) populateEditForm(recipe);
+  }
+
+  // ── EMOJI PICKER ──
+  let selectedEmoji = '🍜';
+  const catBgMap = {
+    ayam: '#FEF0E3', seafood: '#E3F5F2', sayur: '#EDFBEE',
+    daging: '#F5E6DC', snack: '#FEFAE3', minuman: '#EDE8FD', '': '#FEF0E3'
+  };
+
+  document.getElementById('emoji-grid').addEventListener('click', (e) => {
+    const item = e.target.closest('.emoji-item');
+    if (!item) return;
+    document.querySelectorAll('.emoji-item').forEach(el => {
+      el.classList.remove('selected');
+      el.setAttribute('aria-checked', 'false');
+    });
+    item.classList.add('selected');
+    item.setAttribute('aria-checked', 'true');
+    selectedEmoji = item.dataset.emoji;
+    document.getElementById('f-emoji').value = selectedEmoji;
+    document.getElementById('emoji-preview-icon').textContent = selectedEmoji;
+    updatePreview();
+  });
+
+  // ── LIVE PREVIEW ──
+  function updatePreview() {
+    const name = document.getElementById('f-name').value.trim() || 'Nama Resep…';
+    const cat  = document.getElementById('f-cat').value;
+    const time = document.getElementById('f-time').value;
+    const diff = document.getElementById('f-diff').value;
+
+    document.getElementById('preview-title').textContent = name;
+    document.getElementById('preview-cat').textContent   = cat ? getCatLabel(cat) : '— Pilih Kategori';
+    document.getElementById('preview-time').textContent  = time ? `⏱️ ${time} mnt` : '⏱️ — mnt';
+    document.getElementById('preview-diff').textContent  = `📊 ${diff}`;
+    document.getElementById('preview-thumb').textContent = selectedEmoji;
+    document.getElementById('preview-thumb').style.background = catBgMap[cat] || '#FEF0E3';
+  }
+
+  // ── ADD INGREDIENT ROW ──
+  function addIngredient() {
+    const container = document.getElementById('ing-rows');
+    const row = document.createElement('div');
+    row.className = 'ing-row';
+    row.innerHTML = `
+      <input type="text" placeholder="Nama bahan" class="ing-name" />
+      <input type="text" placeholder="Jumlah" class="ing-amount" />
+      <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus baris">✕</button>
+    `;
+    container.appendChild(row);
+    row.querySelector('input').focus();
+  }
+
+  // ── ADD STEP ROW ──
+  function addStep() {
+    const container = document.getElementById('step-rows');
+    const num = container.querySelectorAll('.step-row').length + 1;
+    const row = document.createElement('div');
+    row.className = 'step-row';
+    row.innerHTML = `
+      <span class="step-num-badge">${num}</span>
+      <textarea class="step-text" placeholder="Tuliskan langkah memasak…" rows="2"></textarea>
+      <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus langkah">✕</button>
+    `;
+    container.appendChild(row);
+    row.querySelector('textarea').focus();
+  }
+
+  // ── REMOVE ROW ──
+  function removeRow(btn) {
+    const row = btn.closest('.ing-row, .step-row');
+    if (!row) return;
+    const parent = row.parentElement;
+    if (parent.querySelectorAll('.ing-row, .step-row').length <= 1) {
+      showToast('❗ Minimal satu baris harus ada!');
+      return;
+    }
+    row.remove();
+    renumberSteps();
+  }
+
+  function renumberSteps() {
+    document.querySelectorAll('.step-num-badge').forEach((el, i) => el.textContent = i + 1);
+  }
+
+  // ── RESET FORM ──
+  function resetForm() {
+    if (editId && !confirm('Reset akan membatalkan pengeditan. Lanjutkan?')) return;
+    editId = null;
+    document.getElementById('recipe-form').reset();
+    document.getElementById('f-emoji').value = '🍜';
+    selectedEmoji = '🍜';
+    document.getElementById('emoji-preview-icon').textContent = '🍜';
+    document.querySelectorAll('.emoji-item').forEach(el => {
+      el.classList.toggle('selected', el.dataset.emoji === '🍜');
+    });
+
+    document.getElementById('ing-rows').innerHTML = `
+      <div class="ing-row">
+        <input type="text" placeholder="Nama bahan (cth: Daging sapi)" class="ing-name" />
+        <input type="text" placeholder="Jumlah (cth: 500 gram)" class="ing-amount" />
+        <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus baris">✕</button>
+      </div>`;
+
+    document.getElementById('step-rows').innerHTML = `
+      <div class="step-row">
+        <span class="step-num-badge">1</span>
+        <textarea class="step-text" placeholder="Tuliskan langkah pertama memasak…" rows="2"></textarea>
+        <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus langkah">✕</button>
+      </div>`;
+
+    document.getElementById('form-heading').textContent = '➕ Tambah Resep Baru';
+    document.getElementById('page-title').textContent   = 'Tambah Resep';
+    document.getElementById('submit-btn').textContent   = '🚀 Publikasikan Resep';
+    updatePreview();
+  }
+
+  // ── POPULATE EDIT FORM ──
+  function populateEditForm(r) {
+    document.getElementById('form-heading').textContent = '✏️ Edit Resep';
+    document.getElementById('page-title').textContent   = 'Edit Resep';
+    document.getElementById('submit-btn').textContent   = '💾 Simpan Perubahan';
+
+    document.getElementById('f-name').value    = r.name;
+    document.getElementById('f-cat').value     = r.category;
+    document.getElementById('f-diff').value    = r.difficulty;
+    document.getElementById('f-time').value    = r.time;
+    document.getElementById('f-serving').value = r.serving;
+    document.getElementById('f-desc').value    = r.desc;
+    document.getElementById('f-tips').value    = r.tips || '';
+
+    selectedEmoji = r.emoji;
+    document.getElementById('f-emoji').value = r.emoji;
+    document.getElementById('emoji-preview-icon').textContent = r.emoji;
+    document.querySelectorAll('.emoji-item').forEach(el => {
+      el.classList.toggle('selected', el.dataset.emoji === r.emoji);
+    });
+
+    // Ingredients
+    document.getElementById('ing-rows').innerHTML = r.ingredients.map(ing => `
+      <div class="ing-row">
+        <input type="text" placeholder="Nama bahan" class="ing-name" value="${ing.name}" />
+        <input type="text" placeholder="Jumlah" class="ing-amount" value="${ing.amount}" />
+        <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus baris">✕</button>
+      </div>
+    `).join('');
+
+    // Steps
+    document.getElementById('step-rows').innerHTML = r.steps.map((s, i) => `
+      <div class="step-row">
+        <span class="step-num-badge">${i + 1}</span>
+        <textarea class="step-text" rows="2">${s}</textarea>
+        <button type="button" class="btn-remove" onclick="removeRow(this)" aria-label="Hapus langkah">✕</button>
+      </div>
+    `).join('');
+
+    updatePreview();
+  }
+
+  // ── SUBMIT ──
+  document.getElementById('recipe-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const name    = document.getElementById('f-name').value.trim();
+    const cat     = document.getElementById('f-cat').value;
+    const diff    = document.getElementById('f-diff').value;
+    const time    = parseInt(document.getElementById('f-time').value);
+    const serving = document.getElementById('f-serving').value.trim() || '2 orang';
+    const desc    = document.getElementById('f-desc').value.trim() || 'Resep lezat buatan sendiri.';
+    const tips    = document.getElementById('f-tips').value.trim();
+    const emoji   = selectedEmoji || '🍜';
+
+    if (!name) return showToast('❗ Nama resep wajib diisi!');
+    if (!cat)  return showToast('❗ Pilih kategori resep!');
+    if (!time || time < 1) return showToast('❗ Waktu masak wajib diisi!');
+
+    // Collect ingredients
+    const ingredients = [];
+    document.querySelectorAll('#ing-rows .ing-row').forEach(row => {
+      const n = row.querySelector('.ing-name').value.trim();
+      const a = row.querySelector('.ing-amount').value.trim();
+      if (n) ingredients.push({ name: n, amount: a || '-' });
+    });
+    if (ingredients.length === 0) return showToast('❗ Tambahkan minimal satu bahan!');
+
+    // Collect steps
+    const steps = [];
+    document.querySelectorAll('#step-rows .step-text').forEach(ta => {
+      if (ta.value.trim()) steps.push(ta.value.trim());
+    });
+    if (steps.length === 0) return showToast('❗ Tambahkan minimal satu langkah memasak!');
+
+    const catBgColorMap = {
+      ayam: '#FEF0E3', seafood: '#E3F5F2', sayur: '#EDFBEE',
+      daging: '#F5E6DC', snack: '#FEFAE3', minuman: '#EDE8FD'
+    };
+    const catDarkMap = {
+      ayam: '#C8621A', seafood: '#2A6B5E', sayur: '#2E7D52',
+      daging: '#7A4F32', snack: '#B08060', minuman: '#5C4DB1'
+    };
+
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = editId ? '💾 Menyimpan…' : '🚀 Mempublikasikan…';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      const recipes = DB.getRecipes();
+
+      if (editId) {
+        // Update existing
+        const idx = recipes.findIndex(r => r.id === editId);
+        if (idx !== -1) {
+          recipes[idx] = {
+            ...recipes[idx],
+            name, category: cat, difficulty: diff, time, serving, desc, tips, emoji,
+            bgColor: catDarkMap[cat] || '#7A4F32',
+            bgLight: catBgColorMap[cat] || '#FEF0E3',
+            ingredients, steps,
+          };
+        }
+        DB.setRecipes(recipes);
+        showToast('✅ Resep berhasil diperbarui!');
+        setTimeout(() => {
+          localStorage.setItem('dn_active_recipe', editId);
+          window.location.href = 'see_recipe.html';
+        }, 800);
+
+      } else {
+        // New recipe
+        const newRecipe = {
+          id: Date.now(),
+          name, category: cat, emoji,
+          bgColor: catDarkMap[cat] || '#7A4F32',
+          bgLight: catBgColorMap[cat] || '#FEF0E3',
+          time, serving, difficulty: diff,
+          rating: 0, ratingCount: 0,
+          author: user?.name || 'Chef Nusantara',
+          authorAvatar: user?.avatar || '👨‍🍳',
+          authorName: user?.name || '',
+          desc, ingredients, steps, tips,
+          reviews: [],
+          isMine: true,
+          createdAt: new Date().toISOString().split('T')[0]
+        };
+        recipes.push(newRecipe);
+        DB.setRecipes(recipes);
+        showToast('🎉 Resep berhasil dipublikasikan!');
+        setTimeout(() => window.location.href = 'my_recipe.html', 900);
+      }
+    }, 700);
+  });
+</script>
+</body>
+</html>

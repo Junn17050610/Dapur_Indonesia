@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masuk — Dapur Indonesia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { overflow: hidden; }
+    .auth-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      min-height: 100vh;
+    }
+
+    /* LEFT PANEL */
+    .auth-panel {
+      background: var(--amber);
+      display: flex; flex-direction: column;
+      padding: 2.5rem 2.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-panel::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      bottom: -200px; right: -200px;
+    }
+    .auth-panel::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: rgba(0,0,0,.05);
+      top: -100px; left: -100px;
+    }
+    .panel-content { position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1; }
+    .auth-panel .brand-logo .wordmark { color: #fff; }
+    .auth-panel .brand-logo .wordmark em { color: rgba(255,255,255,.7); }
+
+    .panel-tagline {
+      margin-top: auto;
+      color: rgba(255,255,255,.9);
+    }
+    .panel-tagline h2 {
+      font-size: 2.4rem;
+      color: #fff;
+      margin-bottom: .6rem;
+      line-height: 1.2;
+    }
+    .panel-tagline p { font-size: 1rem; line-height: 1.7; margin-bottom: 2rem; }
+
+    .panel-illustration {
+      text-align: center;
+      font-size: 7rem;
+      line-height: 1;
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,.15));
+      margin-top: 2rem;
+    }
+    .panel-quote {
+      background: rgba(255,255,255,.12);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+      font-size: .85rem;
+      color: rgba(255,255,255,.85);
+      font-style: italic;
+      border-left: 3px solid rgba(255,255,255,.4);
+    }
+    .panel-quote cite { display: block; margin-top: .4rem; font-style: normal; font-weight: 600; font-size: .78rem; opacity: .7; }
+
+    /* RIGHT PANEL */
+    .auth-form-panel {
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 2.5rem;
+      position: relative;
+    }
+    .back-btn {
+      position: absolute;
+      top: 1.5rem; left: 1.75rem;
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .85rem; color: var(--muted);
+      transition: color .15s;
+    }
+    .back-btn:hover { color: var(--amber); text-decoration: none; }
+
+    .auth-form-wrap {
+      width: 100%;
+      max-width: 420px;
+      animation: fadeUp .45s var(--ease);
+    }
+    .auth-form-wrap .form-title {
+      font-size: 2rem;
+      margin-bottom: .4rem;
+      color: var(--text);
+    }
+    .auth-form-wrap .form-subtitle {
+      color: var(--muted);
+      font-size: .93rem;
+      margin-bottom: 2rem;
+    }
+
+    .forgot-link {
+      font-size: .83rem;
+      color: var(--amber);
+    }
+    .form-row-inline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-submit {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,.0);
+      transition: background .15s;
+    }
+    .btn-submit:active::after { background: rgba(255,255,255,.1); }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: .9rem;
+      color: var(--muted);
+    }
+    .auth-switch a { font-weight: 600; }
+
+    .or-divider {
+      display: flex; align-items: center; gap: .75rem;
+      color: var(--muted); font-size: .82rem;
+      margin: 1.5rem 0;
+    }
+    .or-divider::before, .or-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    @media (max-width: 768px) {
+      body { overflow: auto; }
+      .auth-layout { grid-template-columns: 1fr; }
+      .auth-panel { display: none; }
+      .auth-form-panel { min-height: 100vh; padding: 4.5rem 1.5rem 2rem; }
+      .back-btn { top: 1rem; left: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="auth-layout">
+
+  <!-- LEFT: Visual Panel -->
+  <aside class="auth-panel" aria-hidden="true">
+    <div class="panel-content">
+      <a href="landing_page.html" class="brand-logo">
+        <span class="icon">🍳</span>
+        <span class="wordmark">Dapur<em> Indonesia</em></span>
+      </a>
+      <div class="panel-tagline">
+        <h2>Selamat<br/>Datang Kembali</h2>
+        <p>Masuk dan lanjutkan perjalanan kuliner nusantara Anda.</p>
+      </div>
+      <div class="panel-illustration">🍲</div>
+      <div class="panel-quote">
+        "Memasak adalah salah satu cara terbaik untuk menunjukkan cinta kepada orang-orang yang kita sayang."
+        <cite>— Pepatah Masakan</cite>
+      </div>
+    </div>
+  </aside>
+
+  <!-- RIGHT: Form -->
+  <main class="auth-form-panel">
+    <a href="landing_page.html" class="back-btn">← Kembali ke Beranda</a>
+
+    <div class="auth-form-wrap">
+      <h1 class="form-title">Masuk</h1>
+      <p class="form-subtitle">Belum punya akun? <a href="register_page.html">Daftar gratis</a></p>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label for="email">Email <span class="required">*</span></label>
+          <div class="input-with-icon">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="email" name="email"
+                   class="form-control"
+                   placeholder="nama@email.com"
+                   value="chef@dapur.id"
+                   autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password <span class="required">*</span></label>
+          <div class="input-with-addon">
+            <input type="password" id="password" name="password"
+                   class="form-control"
+                   placeholder="Masukkan password"
+                   value="12345678"
+                   autocomplete="current-password" required />
+            <button type="button" class="addon-btn" id="toggle-pass" aria-label="Tampilkan password">👁</button>
+          </div>
+        </div>
+
+        <div class="form-row-inline">
+          <label class="checkbox-row">
+            <input type="checkbox" id="remember" checked />
+            Ingat saya
+          </label>
+          <a href="#" class="forgot-link">Lupa password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg btn-submit" id="submit-btn">
+          Masuk ke Akun
+        </button>
+
+        <div class="or-divider">atau</div>
+
+        <a href="home_page.html" class="btn btn-secondary btn-full" id="demo-btn">
+          👀 Lihat Demo (tanpa login)
+        </a>
+      </form>
+
+      <p class="auth-switch">
+        Belum punya akun? <a href="register_page.html">Daftar sekarang</a>
+      </p>
+    </div>
+  </main>
+</div>
+
+<div id="toast-container" role="status" aria-live="polite"></div>
+<script src="shared.js"></script>
+<script>
+  // Redirect if already logged in
+  if (DB.isLoggedIn()) window.location.href = 'home_page.html';
+
+  // Toggle password visibility
+  document.getElementById('toggle-pass').addEventListener('click', function () {
+    const input = document.getElementById('password');
+    const isPass = input.type === 'password';
+    input.type = isPass ? 'text' : 'password';
+    this.textContent = isPass ? '🙈' : '👁';
+  });
+
+  // Login form
+  document.getElementById('login-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) {
+      showToast('❗ Mohon isi semua kolom!');
+      return;
+    }
+    if (!email.includes('@')) {
+      showToast('❗ Format email tidak valid!');
+      return;
+    }
+    if (password.length < 6) {
+      showToast('❗ Password minimal 6 karakter!');
+      return;
+    }
+
+    // Dummy login — simulate loading
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = 'Masuk...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      const namePart = email.split('@')[0].replace(/[._]/g, ' ');
+      const name = namePart.replace(/\b\w/g, c => c.toUpperCase());
+
+      DB.login({
+        name,
+        email,
+        bio: 'Pecinta kuliner nusantara yang gemar bereksperimen di dapur.',
+        location: 'Jakarta, Indonesia',
+        avatar: '👨‍🍳',
+        joinDate: 'Januari 2024'
+      });
+
+      showToast(`👋 Selamat datang kembali, ${name}!`);
+      setTimeout(() => window.location.href = 'home_page.html', 800);
+    }, 900);
+  });
+
+  // Demo button - bypass login
+  document.getElementById('demo-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    DB.login({
+      name: 'Chef Demo',
+      email: 'demo@dapur.id',
+      bio: 'Mode demo — jelajahi fitur Dapur Indonesia.',
+      location: 'Jakarta, Indonesia',
+      avatar: '🧑‍🍳',
+      joinDate: 'Juni 2025'
+    });
+    window.location.href = 'home_page.html';
+  });
+</script>
+</body>
+</html>

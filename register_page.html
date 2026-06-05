@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar — Dapur Indonesia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { overflow-x: hidden; }
+    .auth-layout {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      min-height: 100vh;
+    }
+
+    /* RIGHT PANEL (visual) */
+    .auth-panel {
+      background: var(--teal);
+      display: flex; flex-direction: column;
+      padding: 2.5rem 2.75rem;
+      position: relative; overflow: hidden;
+      order: 2;
+    }
+    .auth-panel::before {
+      content: '';
+      position: absolute; width: 450px; height: 450px;
+      border-radius: 50%; background: rgba(255,255,255,.06);
+      top: -150px; left: -150px;
+    }
+    .auth-panel::after {
+      content: '';
+      position: absolute; width: 280px; height: 280px;
+      border-radius: 50%; background: rgba(0,0,0,.06);
+      bottom: -80px; right: -80px;
+    }
+    .panel-content { position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1; }
+    .auth-panel .brand-logo .wordmark { color: #fff; }
+    .auth-panel .brand-logo .wordmark em { color: rgba(255,255,255,.65); }
+
+    .panel-tagline { margin-top: auto; }
+    .panel-tagline h2 { font-size: 2.2rem; color: #fff; margin-bottom: .6rem; line-height: 1.2; }
+    .panel-tagline p { font-size: .95rem; color: rgba(255,255,255,.85); line-height: 1.7; }
+
+    .panel-benefits { margin-top: 2rem; display: flex; flex-direction: column; gap: .85rem; }
+    .benefit-item {
+      display: flex; align-items: center; gap: .85rem;
+      background: rgba(255,255,255,.1);
+      border-radius: var(--radius-md); padding: .85rem 1rem;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .benefit-icon { font-size: 1.35rem; flex-shrink: 0; }
+    .benefit-text { font-size: .87rem; color: rgba(255,255,255,.9); line-height: 1.45; }
+    .benefit-text strong { color: #fff; display: block; margin-bottom: .1rem; }
+
+    /* LEFT PANEL (form) */
+    .auth-form-panel {
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem 2.5rem;
+      position: relative;
+      order: 1;
+      overflow-y: auto;
+    }
+    .back-btn {
+      position: absolute;
+      top: 1.5rem; left: 1.75rem;
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .85rem; color: var(--muted);
+      transition: color .15s;
+    }
+    .back-btn:hover { color: var(--amber); text-decoration: none; }
+
+    .auth-form-wrap {
+      width: 100%; max-width: 440px;
+      animation: fadeUp .45s var(--ease);
+      padding: 3.5rem 0 2rem;
+    }
+    .form-title { font-size: 2rem; margin-bottom: .4rem; color: var(--text); }
+    .form-subtitle { color: var(--muted); font-size: .93rem; margin-bottom: 2rem; }
+
+    /* Password strength */
+    .pass-strength { margin-top: .5rem; }
+    .strength-bar {
+      height: 4px; background: var(--border);
+      border-radius: var(--radius-full); overflow: hidden; margin-bottom: .35rem;
+    }
+    .strength-fill {
+      height: 100%; width: 0%;
+      border-radius: var(--radius-full);
+      transition: width .3s, background .3s;
+    }
+    .strength-label { font-size: .75rem; color: var(--muted); }
+
+    .terms-text { font-size: .82rem; color: var(--text-2); line-height: 1.6; margin-top: 1rem; }
+    .terms-text a { color: var(--amber); }
+
+    .auth-switch { text-align: center; margin-top: 1.5rem; font-size: .9rem; color: var(--muted); }
+    .auth-switch a { font-weight: 600; }
+
+    @media (max-width: 900px) {
+      .auth-layout { grid-template-columns: 1fr; }
+      .auth-panel { display: none; }
+      .auth-form-panel { order: 1; min-height: 100vh; padding: 4.5rem 1.5rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="auth-layout">
+
+  <!-- LEFT: Form -->
+  <main class="auth-form-panel">
+    <a href="landing_page.html" class="back-btn">← Kembali</a>
+
+    <div class="auth-form-wrap">
+      <h1 class="form-title">Buat Akun Baru</h1>
+      <p class="form-subtitle">Sudah punya akun? <a href="login_page.html">Masuk di sini</a></p>
+
+      <form id="register-form" novalidate>
+        <div class="form-group">
+          <label for="fullname">Nama Lengkap <span class="required">*</span></label>
+          <div class="input-with-icon">
+            <span class="input-icon">👤</span>
+            <input type="text" id="fullname" name="fullname"
+                   class="form-control"
+                   placeholder="Masukkan nama lengkap"
+                   autocomplete="name" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email <span class="required">*</span></label>
+          <div class="input-with-icon">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="email" name="email"
+                   class="form-control"
+                   placeholder="nama@email.com"
+                   autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password <span class="required">*</span></label>
+          <div class="input-with-addon">
+            <input type="password" id="password" name="password"
+                   class="form-control"
+                   placeholder="Minimal 8 karakter"
+                   autocomplete="new-password"
+                   oninput="checkStrength(this.value)"
+                   required />
+            <button type="button" class="addon-btn" id="toggle-pass" aria-label="Tampilkan password">👁</button>
+          </div>
+          <div class="pass-strength" id="pass-strength" style="display:none">
+            <div class="strength-bar">
+              <div class="strength-fill" id="strength-fill"></div>
+            </div>
+            <span class="strength-label" id="strength-label"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirm-pass">Konfirmasi Password <span class="required">*</span></label>
+          <div class="input-with-addon">
+            <input type="password" id="confirm-pass" name="confirm-pass"
+                   class="form-control"
+                   placeholder="Ulangi password"
+                   autocomplete="new-password" required />
+            <button type="button" class="addon-btn" id="toggle-pass2" aria-label="Tampilkan password">👁</button>
+          </div>
+        </div>
+
+        <label class="checkbox-row terms-text">
+          <input type="checkbox" id="agree" required />
+          Saya menyetujui <a href="#">Syarat & Ketentuan</a> dan <a href="#">Kebijakan Privasi</a> Dapur Indonesia
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg" id="submit-btn" style="margin-top:1.4rem">
+          Buat Akun Gratis 🚀
+        </button>
+      </form>
+
+      <p class="auth-switch">
+        Sudah punya akun? <a href="login_page.html">Masuk sekarang</a>
+      </p>
+    </div>
+  </main>
+
+  <!-- RIGHT: Visual Panel -->
+  <aside class="auth-panel" aria-hidden="true">
+    <div class="panel-content">
+      <a href="landing_page.html" class="brand-logo">
+        <span class="icon">🍳</span>
+        <span class="wordmark">Dapur<em> Indonesia</em></span>
+      </a>
+      <div class="panel-tagline">
+        <h2>Bergabung<br/>Sekarang</h2>
+        <p>Buat akun gratis dan mulai perjalanan memasak nusantara bersama ribuan chef Indonesia.</p>
+      </div>
+      <div class="panel-benefits">
+        <div class="benefit-item">
+          <span class="benefit-icon">📖</span>
+          <div class="benefit-text">
+            <strong>Akses 500+ Resep</strong>
+            Koleksi resep autentik nusantara dari Sabang hingga Merauke
+          </div>
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-icon">❤️</span>
+          <div class="benefit-text">
+            <strong>Simpan Favorit</strong>
+            Kumpulkan resep favoritmu dalam satu tempat yang mudah diakses
+          </div>
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-icon">✍️</span>
+          <div class="benefit-text">
+            <strong>Bagikan Resep</strong>
+            Upload dan bagikan resep andalanmu ke komunitas
+          </div>
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-icon">🎁</span>
+          <div class="benefit-text">
+            <strong>Gratis Selamanya</strong>
+            Tidak perlu kartu kredit atau biaya apapun
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div id="toast-container" role="status" aria-live="polite"></div>
+<script src="shared.js"></script>
+<script>
+  if (DB.isLoggedIn()) window.location.href = 'home_page.html';
+
+  // Toggle passwords
+  document.getElementById('toggle-pass').addEventListener('click', function () {
+    const inp = document.getElementById('password');
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    this.textContent = show ? '🙈' : '👁';
+  });
+  document.getElementById('toggle-pass2').addEventListener('click', function () {
+    const inp = document.getElementById('confirm-pass');
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    this.textContent = show ? '🙈' : '👁';
+  });
+
+  // Password strength
+  function checkStrength(val) {
+    const el = document.getElementById('pass-strength');
+    const fill = document.getElementById('strength-fill');
+    const label = document.getElementById('strength-label');
+    el.style.display = val.length ? 'block' : 'none';
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const levels = [
+      { pct: '15%', color: '#EF4444', text: 'Sangat lemah' },
+      { pct: '35%', color: '#F97316', text: 'Lemah' },
+      { pct: '60%', color: '#EAB308', text: 'Sedang' },
+      { pct: '80%', color: '#22C55E', text: 'Kuat' },
+      { pct: '100%', color: '#16A34A', text: 'Sangat kuat' },
+    ];
+    const l = levels[score] || levels[0];
+    fill.style.width = l.pct;
+    fill.style.background = l.color;
+    label.textContent = l.text;
+    label.style.color = l.color;
+  }
+
+  // Register form
+  document.getElementById('register-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const name  = document.getElementById('fullname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const pass  = document.getElementById('password').value;
+    const pass2 = document.getElementById('confirm-pass').value;
+    const agree = document.getElementById('agree').checked;
+
+    if (!name || !email || !pass || !pass2) return showToast('❗ Mohon isi semua kolom!');
+    if (!email.includes('@')) return showToast('❗ Format email tidak valid!');
+    if (pass.length < 8) return showToast('❗ Password minimal 8 karakter!');
+    if (pass !== pass2) return showToast('❗ Password tidak cocok!');
+    if (!agree) return showToast('❗ Setujui syarat & ketentuan terlebih dahulu!');
+
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = 'Membuat akun...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      DB.login({ name, email, bio: '', location: '', avatar: '👨‍🍳', joinDate: new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) });
+      showToast(`🎉 Akun berhasil dibuat! Selamat datang, ${name}!`);
+      setTimeout(() => window.location.href = 'home_page.html', 900);
+    }, 900);
+  });
+</script>
+</body>
+</html>

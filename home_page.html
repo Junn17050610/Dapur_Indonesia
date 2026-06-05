@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beranda — Dapur Indonesia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* HERO BANNER */
+    .home-hero {
+      background: linear-gradient(135deg, var(--amber) 0%, #E05A18 100%);
+      border-radius: var(--radius-xl);
+      padding: 2.25rem 2.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .home-hero::before {
+      content: '';
+      position: absolute; width: 320px; height: 320px;
+      border-radius: 50%; background: rgba(255,255,255,.08);
+      right: -80px; top: -80px;
+    }
+    .home-hero::after {
+      content: '';
+      position: absolute; width: 200px; height: 200px;
+      border-radius: 50%; background: rgba(0,0,0,.05);
+      left: -60px; bottom: -60px;
+    }
+    .hero-text { position: relative; z-index: 1; }
+    .hero-greeting { font-size: .82rem; color: rgba(255,255,255,.75); margin-bottom: .3rem; text-transform: uppercase; letter-spacing: .07em; }
+    .hero-text h2 { font-size: 1.8rem; color: #fff; margin-bottom: .5rem; line-height: 1.2; }
+    .hero-text p { color: rgba(255,255,255,.8); font-size: .9rem; max-width: 360px; }
+    .hero-emoji { font-size: 6rem; position: relative; z-index: 1; filter: drop-shadow(0 8px 20px rgba(0,0,0,.2)); flex-shrink: 0; }
+
+    /* FILTER ROW */
+    .filter-section { margin-bottom: 1.5rem; }
+    .filter-row {
+      display: flex; align-items: center; gap: .6rem;
+      flex-wrap: nowrap; overflow-x: auto;
+      padding-bottom: .35rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+
+    /* SORT & COUNT */
+    .sort-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem; gap: 1rem; flex-wrap: wrap;
+    }
+    .result-label { font-size: .85rem; color: var(--muted); }
+    .sort-select {
+      padding: .45rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      font-size: .85rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color .18s;
+    }
+    .sort-select:focus { border-color: var(--amber); }
+
+    /* SECTION HEADING */
+    .section-heading {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.1rem;
+    }
+    .section-heading h3 { font-size: 1.15rem; color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar" role="navigation" aria-label="Sidebar navigasi">
+  <div class="sidebar-header">
+    <a href="home_page.html" class="brand-logo">
+      <span class="icon">🍳</span>
+      <span class="wordmark">Dapur<em> Indonesia</em></span>
+    </a>
+  </div>
+  <ul class="sidebar-nav" role="list">
+    <li><a href="home_page.html"      class="nav-link active" data-page="home"       role="listitem"><span class="nav-icon">🏠</span> Beranda</a></li>
+    <li><a href="my_recipe.html"      class="nav-link"        data-page="my-recipe"  role="listitem"><span class="nav-icon">📖</span> Resep Saya</a></li>
+    <li><a href="add_recipe_page.html" class="nav-link"       data-page="add-recipe" role="listitem"><span class="nav-icon">➕</span> Tambah Resep</a></li>
+    <li><a href="profile_page.html"   class="nav-link"        data-page="profile"    role="listitem"><span class="nav-icon">👤</span> Profil</a></li>
+  </ul>
+  <div class="sidebar-footer">
+    <button class="btn btn-ghost btn-sm btn-full" id="logout-btn" style="justify-content:flex-start;gap:.5rem">🚪 Keluar</button>
+  </div>
+</nav>
+<div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- TOPBAR -->
+<header class="app-navbar" role="banner">
+  <div class="nav-left">
+    <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <span style="font-family:var(--font-head);font-weight:700;font-size:1.05rem;color:var(--brown-dark)">Beranda</span>
+  </div>
+  <div class="nav-right">
+    <a href="my_recipe.html" class="btn btn-ghost btn-sm" title="Resep Saya">📖</a>
+    <div class="avatar" id="user-avatar" title="Profil" onclick="window.location.href='profile_page.html'">👨‍🍳</div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="app-main">
+  <main class="page-content" id="main-content">
+
+    <!-- HERO BANNER -->
+    <div class="home-hero anim-fade-up">
+      <div class="hero-text">
+        <p class="hero-greeting" id="greeting-text">Selamat pagi, Chef</p>
+        <h2 id="hero-title">Apa yang ingin<br/>dimasak hari ini?</h2>
+        <p>Temukan inspirasi dari ratusan resep autentik nusantara.</p>
+      </div>
+      <div class="hero-emoji" aria-hidden="true" id="hero-emoji">🍲</div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-bar anim-fade-up-2" role="search">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input type="search" id="search-input" placeholder="Cari resep, bahan, atau kategori…" aria-label="Cari resep" autocomplete="off" />
+      <button class="clear-btn hidden" id="clear-btn" aria-label="Hapus pencarian">✕</button>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-section anim-fade-up-3">
+      <div class="filter-row" role="group" aria-label="Filter kategori" id="filter-row">
+        <button class="chip active" data-cat="semua">Semua</button>
+        <button class="chip" data-cat="ayam">🐔 Ayam</button>
+        <button class="chip" data-cat="seafood">🦐 Seafood</button>
+        <button class="chip" data-cat="sayur">🥦 Sayur</button>
+        <button class="chip" data-cat="daging">🥩 Daging</button>
+        <button class="chip" data-cat="snack">🍡 Snack</button>
+        <button class="chip" data-cat="minuman">🥤 Minuman</button>
+      </div>
+    </div>
+
+    <!-- SORT BAR -->
+    <div class="sort-bar anim-fade-up-4">
+      <p class="result-label" id="result-label">Menampilkan semua resep</p>
+      <select class="sort-select" id="sort-select" aria-label="Urutkan resep">
+        <option value="default">Urutkan: Default</option>
+        <option value="rating">Rating Tertinggi</option>
+        <option value="time-asc">Waktu: Tercepat</option>
+        <option value="time-desc">Waktu: Terlama</option>
+        <option value="newest">Terbaru</option>
+      </select>
+    </div>
+
+    <!-- RECIPE GRID -->
+    <section aria-label="Daftar resep">
+      <div class="recipe-grid" id="recipe-grid"></div>
+      <div class="empty-state hidden" id="empty-state" role="status">
+        <div class="empty-icon">🔍</div>
+        <h3>Resep tidak ditemukan</h3>
+        <p>Coba kata kunci lain atau ubah filter kategori.</p>
+        <button class="btn btn-outline" onclick="clearSearch()">Tampilkan Semua</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="toast-container" role="status" aria-live="polite"></div>
+<script src="shared.js"></script>
+<script>
+  requireAuth();
+
+  // State
+  let activeCategory = 'semua';
+  let searchQuery    = '';
+  let sortBy         = 'default';
+
+  // User info
+  const user = DB.getUser();
+  if (user) {
+    document.getElementById('user-avatar').textContent = user.avatar || '👨‍🍳';
+    const hour = new Date().getHours();
+    const greet = hour < 11 ? 'pagi' : hour < 15 ? 'siang' : hour < 18 ? 'sore' : 'malam';
+    document.getElementById('greeting-text').textContent = `Selamat ${greet}, Chef ${user.name.split(' ')[0]}!`;
+    document.getElementById('hero-title').innerHTML = `Apa yang ingin<br/>dimasak hari ini?`;
+  }
+
+  // Random hero emoji
+  const heroEmojis = ['🍲', '🥘', '🍜', '🍛', '🫕', '🥗', '🍳'];
+  document.getElementById('hero-emoji').textContent = heroEmojis[Math.floor(Math.random() * heroEmojis.length)];
+
+  // Init
+  initSidebar();
+  setActiveNav('home');
+  renderGrid();
+
+  // Logout
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    DB.logout();
+    window.location.href = 'landing_page.html';
+  });
+
+  // Search
+  document.getElementById('search-input').addEventListener('input', function () {
+    searchQuery = this.value.trim();
+    document.getElementById('clear-btn').classList.toggle('hidden', !searchQuery);
+    renderGrid();
+  });
+  function clearSearch() {
+    document.getElementById('search-input').value = '';
+    searchQuery = '';
+    document.getElementById('clear-btn').classList.add('hidden');
+    renderGrid();
+  }
+  document.getElementById('clear-btn').addEventListener('click', clearSearch);
+
+  // Category chips
+  document.getElementById('filter-row').addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeCategory = chip.dataset.cat;
+    renderGrid();
+  });
+
+  // Sort
+  document.getElementById('sort-select').addEventListener('change', function () {
+    sortBy = this.value;
+    renderGrid();
+  });
+
+  // Render
+  function getFiltered() {
+    let list = DB.getRecipes();
+    if (activeCategory !== 'semua') list = list.filter(r => r.category === activeCategory);
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(r =>
+        r.name.toLowerCase().includes(q) ||
+        r.desc.toLowerCase().includes(q) ||
+        r.category.toLowerCase().includes(q) ||
+        r.ingredients.some(i => i.name.toLowerCase().includes(q))
+      );
+    }
+    if (sortBy === 'rating')    list.sort((a, b) => b.rating - a.rating);
+    if (sortBy === 'time-asc')  list.sort((a, b) => a.time - b.time);
+    if (sortBy === 'time-desc') list.sort((a, b) => b.time - a.time);
+    if (sortBy === 'newest')    list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return list;
+  }
+
+  function renderGrid() {
+    const grid  = document.getElementById('recipe-grid');
+    const empty = document.getElementById('empty-state');
+    const label = document.getElementById('result-label');
+    const list  = getFiltered();
+
+    grid.innerHTML = '';
+    empty.classList.add('hidden');
+
+    if (list.length === 0) {
+      empty.classList.remove('hidden');
+      label.textContent = 'Tidak ada resep ditemukan';
+      return;
+    }
+
+    const total = DB.getRecipes().length;
+    label.textContent = list.length === total
+      ? `Menampilkan ${list.length} resep`
+      : `Menampilkan ${list.length} dari ${total} resep`;
+
+    list.forEach((r, i) => {
+      const card = buildRecipeCard(r, { linkTarget: 'see_recipe.html', showMine: true });
+      card.style.animationDelay = `${i * 0.04}s`;
+      grid.appendChild(card);
+    });
+  }
+</script>
+</body>
+</html>
