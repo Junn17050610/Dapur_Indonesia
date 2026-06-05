@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dapur Indonesia — Resep Masakan Indonesia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── LANDING SPECIFIC ── */
+    body { overflow-x: hidden; }
+
+    /* BG BLOBS */
+    .bg-blobs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(90px); opacity: .28;
+      animation: blobFloat 8s ease-in-out infinite alternate;
+    }
+    .blob-1 { width: 650px; height: 650px; background: #F4A261; top: -180px; right: -180px; animation-delay: 0s; }
+    .blob-2 { width: 550px; height: 550px; background: #2A9D8F; bottom: -200px; left: -150px; animation-delay: -3s; }
+    .blob-3 { width: 400px; height: 400px; background: #E76F51; top: 45%; left: 35%; animation-delay: -5s; }
+    @keyframes blobFloat {
+      from { transform: scale(1) translate(0,0); }
+      to   { transform: scale(1.08) translate(20px, -20px); }
+    }
+
+    /* NOISE TEXTURE */
+    .bg-noise {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+      opacity: .5;
+    }
+
+    /* NAVBAR */
+    .land-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: rgba(253,246,236,.75);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(232,216,196,.5);
+      animation: slideDown .5s var(--ease);
+    }
+    .land-nav-links { display: flex; align-items: center; gap: .75rem; }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 10;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: calc(var(--nav-h) + 3rem) 1.5rem 3rem;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--amber-pale); color: var(--amber);
+      border: 1px solid rgba(200,98,26,.2);
+      padding: .4rem 1.1rem; border-radius: var(--radius-full);
+      font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 1.75rem;
+      animation: fadeUp .5s var(--ease) .1s both;
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 900;
+      color: var(--brown-dark);
+      line-height: 1.08;
+      letter-spacing: -.03em;
+      margin-bottom: 1.5rem;
+      max-width: 780px;
+      animation: fadeUp .6s var(--ease) .2s both;
+    }
+    .hero h1 em {
+      color: var(--amber);
+      font-style: italic;
+      display: block;
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--brown-mid);
+      max-width: 500px;
+      line-height: 1.75;
+      margin-bottom: 2.25rem;
+      animation: fadeUp .6s var(--ease) .3s both;
+    }
+    .hero-cta {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+      animation: fadeUp .6s var(--ease) .4s both;
+    }
+
+    /* STATS */
+    .stats-row {
+      display: flex; align-items: center; gap: 2rem;
+      animation: fadeUp .6s var(--ease) .5s both;
+    }
+    .stat-item { text-align: center; }
+    .stat-number {
+      font-family: var(--font-head);
+      font-size: 2rem; font-weight: 900;
+      color: var(--amber);
+      line-height: 1;
+    }
+    .stat-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-top: .2rem; }
+    .stat-sep { width: 1px; height: 48px; background: var(--border); }
+
+    /* FLOATING CARDS */
+    .floating-cards {
+      position: relative; z-index: 10;
+      display: flex; justify-content: center; gap: 1.25rem;
+      padding: 0 1.5rem 5rem;
+      flex-wrap: wrap;
+      overflow: visible;
+    }
+    .float-card {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      width: 190px;
+      overflow: hidden;
+      animation: fadeUp .6s var(--ease) both;
+    }
+    .float-card:nth-child(1) { transform: rotate(-4deg) translateY(0); animation-delay: .6s; }
+    .float-card:nth-child(2) { transform: rotate(0deg) translateY(-28px); animation-delay: .7s; }
+    .float-card:nth-child(3) { transform: rotate(4deg) translateY(8px); animation-delay: .8s; }
+    .float-card:hover { transform: translateY(-6px) rotate(0deg) !important; transition: transform .3s var(--spring); }
+    .float-card-img {
+      height: 110px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;
+    }
+    .float-card-body { padding: .75rem 1rem .9rem; }
+    .float-card-body strong {
+      font-family: var(--font-head); font-size: .95rem; display: block; margin-bottom: .2rem;
+      color: var(--text);
+    }
+    .float-card-body span { font-size: .75rem; color: var(--muted); }
+
+    /* FEATURES */
+    .features {
+      position: relative; z-index: 10;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 5rem 2rem;
+    }
+    .features-inner { max-width: 1000px; margin: 0 auto; }
+    .features-label {
+      text-align: center;
+      font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--amber); margin-bottom: .75rem;
+    }
+    .features-title {
+      text-align: center;
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      margin-bottom: 3.5rem; color: var(--text);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 1.5rem;
+      transition: transform .25s var(--spring), box-shadow .25s;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .feature-icon {
+      font-size: 2rem; margin-bottom: 1rem;
+      width: 3.2rem; height: 3.2rem;
+      background: var(--amber-pale);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feature-card h3 { font-size: 1.05rem; margin-bottom: .5rem; color: var(--text); }
+    .feature-card p { font-size: .87rem; color: var(--muted); line-height: 1.65; }
+
+    /* CTA SECTION */
+    .cta-section {
+      position: relative; z-index: 10;
+      background: var(--amber);
+      padding: 5rem 2rem;
+      text-align: center;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; width: 400px; height: 400px;
+      background: rgba(255,255,255,.08); border-radius: 50%;
+      top: -150px; right: -100px;
+    }
+    .cta-section::after {
+      content: '';
+      position: absolute; width: 300px; height: 300px;
+      background: rgba(0,0,0,.06); border-radius: 50%;
+      bottom: -100px; left: -80px;
+    }
+    .cta-section h2 {
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      color: #fff; margin-bottom: .75rem;
+    }
+    .cta-section p { color: rgba(255,255,255,.85); font-size: 1.05rem; margin-bottom: 2rem; }
+
+    /* FOOTER */
+    .land-footer {
+      position: relative; z-index: 10;
+      background: var(--brown-dark);
+      padding: 2.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .land-footer p { font-size: .83rem; color: rgba(255,255,255,.45); }
+
+    @media (max-width: 768px) {
+      .land-nav { padding: 1rem 1.25rem; }
+      .stats-row { gap: 1.25rem; }
+      .features { padding: 3.5rem 1.25rem; }
+      .land-footer { padding: 2rem 1.25rem; flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 2.4rem; }
+      .hero-cta { flex-direction: column; align-items: center; }
+      .float-card { width: 150px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- BG -->
+<div class="bg-blobs" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+<div class="bg-noise" aria-hidden="true"></div>
+
+<!-- NAVBAR -->
+<nav class="land-nav" role="navigation" aria-label="Navigasi utama">
+  <a href="landing_page.html" class="brand-logo">
+    <span class="icon" aria-hidden="true">🍳</span>
+    <span class="wordmark">Dapur<em> Indonesia</em></span>
+  </a>
+  <div class="land-nav-links">
+    <a href="login_page.html" class="btn btn-ghost btn-sm">Masuk</a>
+    <a href="register_page.html" class="btn btn-primary btn-sm">Daftar Gratis</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<main>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-eyebrow">🌶️ 500+ Resep Autentik Nusantara</div>
+    <h1 id="hero-title">
+      Masak dengan
+      <em>Rasa &amp; Cerita</em>
+    </h1>
+    <p class="hero-sub">
+      Temukan, simpan, dan bagikan resep masakan nusantara terbaik.
+      Dari dapur nenek hingga meja makan modern.
+    </p>
+    <div class="hero-cta">
+      <a href="register_page.html" class="btn btn-primary btn-xl">Mulai Memasak →</a>
+      <a href="login_page.html" class="btn btn-secondary btn-xl">Sudah Punya Akun</a>
+    </div>
+    <div class="stats-row" role="list" aria-label="Statistik platform">
+      <div class="stat-item" role="listitem">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Resep</div>
+      </div>
+      <div class="stat-sep" aria-hidden="true"></div>
+      <div class="stat-item" role="listitem">
+        <div class="stat-number">12K+</div>
+        <div class="stat-label">Pengguna</div>
+      </div>
+      <div class="stat-sep" aria-hidden="true"></div>
+      <div class="stat-item" role="listitem">
+        <div class="stat-number">4.9★</div>
+        <div class="stat-label">Rating</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOATING CARDS -->
+  <div class="floating-cards" aria-hidden="true">
+    <div class="float-card">
+      <div class="float-card-img" style="background:#F5E6DC">🥩</div>
+      <div class="float-card-body">
+        <strong>Rendang Padang</strong>
+        <span>⏱️ 180 menit</span>
+      </div>
+    </div>
+    <div class="float-card">
+      <div class="float-card-img" style="background:#FEF0E3">🍳</div>
+      <div class="float-card-body">
+        <strong>Nasi Goreng</strong>
+        <span>⏱️ 20 menit</span>
+      </div>
+    </div>
+    <div class="float-card">
+      <div class="float-card-img" style="background:#E3F5F2">🥗</div>
+      <div class="float-card-body">
+        <strong>Gado-Gado</strong>
+        <span>⏱️ 35 menit</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features" aria-labelledby="features-title">
+    <div class="features-inner">
+      <p class="features-label">Kenapa Dapur Indonesia?</p>
+      <h2 id="features-title" class="features-title">Semua yang kamu butuhkan<br/>untuk memasak</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📖</div>
+          <h3>Resep Lengkap</h3>
+          <p>Setiap resep dilengkapi bahan-bahan, langkah memasak, dan tips dari chef berpengalaman.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">❤️</div>
+          <h3>Simpan Favorit</h3>
+          <p>Tandai resep favorit dan akses kapan saja tanpa harus mencarinya lagi.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✍️</div>
+          <h3>Bagikan Resep</h3>
+          <p>Upload resep andalanmu dan bagikan ke ribuan pengguna Dapur Indonesia.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⏱️</div>
+          <h3>Timer Memasak</h3>
+          <p>Timer terintegrasi langsung di halaman resep agar masakanmu tidak over-cooked.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⭐</div>
+          <h3>Rating & Ulasan</h3>
+          <p>Beri penilaian dan baca pengalaman orang lain sebelum mencoba resep baru.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Cari & Filter</h3>
+          <p>Cari resep berdasarkan nama, bahan, kategori, atau waktu memasak.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" aria-labelledby="cta-title">
+    <h2 id="cta-title">Siap memulai petualangan<br/>kuliner nusantara?</h2>
+    <p>Gratis selamanya. Tidak perlu kartu kredit.</p>
+    <a href="register_page.html" class="btn btn-white btn-xl">Daftar Sekarang — Gratis →</a>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="land-footer" role="contentinfo">
+  <a href="landing_page.html" class="brand-logo light">
+    <span class="icon" aria-hidden="true">🍳</span>
+    <span class="wordmark">Dapur<em> Indonesia</em></span>
+  </a>
+  <p>© 2025 Dapur Indonesia. Dibuat dengan ❤️ untuk pecinta kuliner Indonesia.</p>
+</footer>
+
+<div id="toast-container" role="status" aria-live="polite"></div>
+<script src="shared.js"></script>
+<script>
+  // Redirect if already logged in
+  if (DB.isLoggedIn()) window.location.href = 'home_page.html';
+</script>
+</body>
+</html>
